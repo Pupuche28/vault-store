@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Tarjetas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menuAdministrador.css') }}">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menú Lateral -->
+            <div class="col-md-2 d-flex flex-column sidebar">
+                <div class="logo-container">
+                    <a href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" class="img-fluid logo">
+                    </a>
+                </div>
+
+                <!-- Opciones del Menú -->
+                <ul class="nav flex-column flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('rol_bp.menu_man_rol') }}"><i class="fas fa-user-tag"></i>
+                            Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('usuario_bp.menu_man_usuario') }}"><i
+                                class="fas fa-users"></i> Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('producto_bp.menu_man_producto') }}"><i
+                                class="fas fa-box"></i> Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('categoria_bp.menu_man_categoria') }}"><i
+                                class="fas fa-tags"></i> Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('resena_bp.menu_man_resena') }}"><i
+                                class="fas fa-star"></i> Reseñas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tarjetaAdmin_bp.menu_man_tarjeta') }}"><i
+                                class="fas fa-credit-card"></i> Tarjetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('pedido_bp.menu_man_pedido') }}"><i
+                                class="fas fa-truck"></i> Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('pago_bp.menu_man_pago') }}">
+                            <i class="fas fa-credit-card"></i> Pagos
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Usuario y Cerrar Sesión -->
+                <div class="user-info mt-auto">
+                    <span class="nav-link">{{ current_user.nombres }}</span>
+                    <a href="{{ url_for('autenticacion_bp.logout') }}" class="nav-link nav-link-underline">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="col-md-10 mt-4">
+                <h1 class="mb-4">Gestión de Tarjetas</h1>
+
+                <!-- Botón para abrir el modal de agregar tarjeta -->
+                <a href="#" class="btn btn-success mb-3" data-bs-toggle="modal"
+                    data-bs-target="#agregarTarjetaModal">Agregar Tarjeta</a>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Número de Tarjeta</th>
+                            <th>Fecha de Expiración</th>
+                            <th>Usuario</th>
+                            <th>Creado El</th>
+                            <th>Modificado El</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tarjeta in tarjetas %}
+                        <tr>
+                            <td>{{ tarjeta[0] }}</td> <!-- idTarjeta -->
+                            <td>{{ tarjeta[1] }}</td> <!-- nombre -->
+                            <td>{{ tarjeta[2] }}</td> <!-- número de tarjeta -->
+                            <td>{{ tarjeta[3] }}</td> <!-- fecha de expiración -->
+                            <td>{{ tarjeta[4] }}</td> <!-- usuario -->
+                            <td>{{ tarjeta[6] }}</td> <!-- fechaCreacion -->
+                            <td>{{ tarjeta[7] }}</td> <!-- fechaModificacion -->
+                            <td>
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editarTarjetaModal" data-id="{{ tarjeta[0] }}"
+                                    data-nombre="{{ tarjeta[1] }}" data-nroTarjeta="{{ tarjeta[2] }}"
+                                    data-fecha="{{ tarjeta[3] }}" data-idUsuario="{{ tarjeta[5] }}">Editar</a>
+
+                                <form method="POST"
+                                    action="{{ url_for('tarjetaAdmin_bp.eliminar_tarjeta', idTarjeta=tarjeta[0]) }}"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-danger eliminar-btn">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Tarjeta -->
+    <div class="modal fade" id="agregarTarjetaModal" tabindex="-1" aria-labelledby="agregarTarjetaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarTarjetaModalLabel">Agregar Tarjeta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agregarTarjetaForm" method="POST"
+                        action="{{ url_for('tarjetaAdmin_bp.agregar_tarjeta') }}">
+                        <div class="mb-3">
+                            <label for="nombre" class="form-label">Nombre en la Tarjeta</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nroTarjeta" class="form-label">Número de Tarjeta</label>
+                            <input type="text" class="form-control" id="nroTarjeta" name="nroTarjeta" required
+                                maxlength="16">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha" class="form-label">Fecha de Expiración</label>
+                            <input type="date" class="form-control" id="fecha" name="fecha" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idUsuario" class="form-label">Usuario</label>
+                            <select class="form-control" id="idUsuario" name="idUsuario" required>
+                                <option value="" selected disabled>Seleccione un usuario</option>
+                                {% for usuario in usuarios %}
+                                <option value="{{ usuario[0] }}">{{ usuario[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Tarjeta</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Tarjeta -->
+    <div class="modal fade" id="editarTarjetaModal" tabindex="-1" aria-labelledby="editarTarjetaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarTarjetaModalLabel">Editar Tarjeta</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarTarjetaForm" method="POST"
+                        action="{{ url_for('tarjetaAdmin_bp.actualizar_tarjeta') }}">
+                        <div class="mb-3">
+                            <label for="nombreEditar" class="form-label">Nombre en la Tarjeta</label>
+                            <input type="text" class="form-control" id="nombreEditar" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nroTarjetaEditar" class="form-label">Número de Tarjeta</label>
+                            <input type="text" class="form-control" id="nroTarjetaEditar" name="nroTarjeta" required
+                                maxlength="16">
+                        </div>
+                        <div class="mb-3">
+                            <label for="fechaEditar" class="form-label">Fecha de Expiración</label>
+                            <input type="date" class="form-control" id="fechaEditar" name="fecha" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idUsuarioEditar" class="form-label">Usuario</label>
+                            <select class="form-control" id="idUsuarioEditar" name="idUsuario" required>
+                                {% for usuario in usuarios %}
+                                <option value="{{ usuario[0] }}">{{ usuario[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <input type="hidden" id="idTarjeta" name="idTarjeta">
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts para manejo de modales y confirmaciones -->
+    <script>
+        var editarTarjetaModal = document.getElementById('editarTarjetaModal');
+        editarTarjetaModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var idTarjeta = button.getAttribute('data-id');
+            var nombre = button.getAttribute('data-nombre');
+            var nroTarjeta = button.getAttribute('data-nroTarjeta');
+            var fecha = button.getAttribute('data-fecha');
+            var idUsuario = button.getAttribute('data-idUsuario');
+
+            document.getElementById('idTarjeta').value = idTarjeta;
+            document.getElementById('nombreEditar').value = nombre;
+            document.getElementById('nroTarjetaEditar').value = nroTarjeta;
+            document.getElementById('fechaEditar').value = fecha;
+
+            var selectUsuario = document.getElementById('idUsuarioEditar');
+            for (var i = 0; i < selectUsuario.options.length; i++) {
+                if (selectUsuario.options[i].value == idUsuario) {
+                    selectUsuario.options[i].selected = true;
+                    break;
+                }
+            }
+        });
+
+        // Confirmación para eliminar
+        document.querySelectorAll('.eliminar-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                var confirmar = confirm("¿Estás seguro que deseas eliminar esta tarjeta?");
+                if (!confirmar) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        // Confirmación para editar
+        document.getElementById('editarTarjetaForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas realizar los cambios?");
+            if (!confirmar) {
+                event.preventDefault();
+            }
+        });
+
+        // Confirmación para agregar
+        document.getElementById('agregarTarjetaForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas registrar esta tarjeta?");
+            if (!confirmar) {
+                event.preventDefault();
+            }
+        });
+    </script>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

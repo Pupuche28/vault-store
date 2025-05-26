@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Pedido</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/image 19.webp') }}" type="image/webp">
+</head>
+
+<body>
+
+    <!-- Barra de navegación -->
+    <div class="container-fluid" style="background-color: #F8F2E4; font-weight: 700;">
+        <div class="container">
+            <nav class="navbar navbar-expand-lg navbar-light">
+                <a class="navbar-brand ms-5" href="{{ url_for('home') }}">
+                    <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto">
+                        <li class="nav-item me-2">
+                            <a class="nav-link nav-link-underline" style="color: black;"
+                                href="{{ url_for('home') }}">Inicio</a>
+                        </li>
+                        <li class="nav-item dropdown me-2">
+                            <a class="nav-link dropdown-toggle" style="color: black;" href="#" id="productosDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Productos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="productosDropdown">
+                                <li><a class="dropdown-item" href="{{ url_for('ceramica') }}">Cerámicas</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('joyeria') }}">Joyería Artesanal</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('retablos') }}">Retablos</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('textiles') }}">Textiles</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link nav-link-underline" style="color: black;"
+                                href="{{ url_for('ceramica') }}">Tiendas</a>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link nav-link-underline" style="color: black;"
+                                href="{{ url_for('nosotros') }}">Nosotros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link nav-link-underline" style="color: black;"
+                                href="{{ url_for('contactos') }}">Contactos</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav me-5">
+                        {% if current_user.is_authenticated %}
+                        <li class="nav-item d-flex align-items-center">
+                            <span class="nav-link" style="color: black;">{{ current_user.nombres }} |</span>
+                            <a href="{{ url_for('autenticacion_bp.logout') }}" class="nav-link nav-link-underline"
+                                style="color: black;">
+                                Cerrar Sesión
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <button class="nav-link nav-link-underline" data-bs-toggle="modal"
+                                data-bs-target="#loginModal" style="background: none; border: none; color: black;">
+                                <i class="fa-solid fa-user"></i>&nbsp;&nbsp;Iniciar Sesión
+                            </button>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <div>
+        <img src="{{ url_for('static', filename='img/background1.webp') }}" class="img-fluid mt-4 mb-4 w-100">
+    </div>
+
+    <div class="container mt-5">
+        <h1 class="mb-4">Detalles del Pedido #{{ id_pedido }}</h1>
+        <a href="{{ url_for('mispedidos_bp.mis_pedidos') }}" class="btn btn-secondary mb-3">Volver a Mis Pedidos</a>
+        
+        {% if detalles %}
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Descuento</th>
+                        <th>IGV</th>
+                        <th>Subtotal</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for detalle in detalles %}
+                    <tr>
+                        <td>{{ detalle[7] }}</td> <!-- Nombre del producto -->
+                        <td>{{ detalle[1] }}</td>
+                        <td>S/ {{ detalle[2] | round(2) }}</td>
+                        <td>S/ {{ detalle[3] | round(2) }}</td>
+                        <td>S/ {{ detalle[4] | round(2) }}</td>
+                        <td>S/ {{ detalle[5] | round(2) }}</td>
+                        <td>S/ {{ detalle[6] | round(2) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay detalles para este pedido.</p>
+        {% endif %}
+    </div>
+
+    <div>
+        <img src="{{ url_for('static', filename='img/background1.webp') }}" class="img-fluid mt-4 mb-4 w-100">
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3">
+                    <h5>Tus pedidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('mispedidos_bp.mis_pedidos') }}" style="color: black; text-decoration: none;">Pedidos</a></li>
+                        <li><a href="{{ url_for('cambios') }}" style="color: black; text-decoration: none;">Envíos</a></li>
+                        <li><a href="#" style="color: black; text-decoration: none;">Formas de pago</a></li>
+                        <li><a href="{{ url_for('cambios') }}" style="color: black; text-decoration: none;">Cambio y devoluciones</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Atención al cliente</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('preguntas') }}" style="color: black; text-decoration: none;">Preguntas frecuentes</a></li>
+                        <li><a href="{{ url_for('contactos') }}" style="color: black; text-decoration: none;">Contáctanos</a></li>
+                        <li><img src="{{ url_for('static', filename='img/libro.webp') }}" alt="Libro de Reclamaciones"></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Acerca de</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('nosotros') }}" style="color: black; text-decoration: none;">Sobre nosotros</a></li>
+                        <li><a href="{{ url_for('legales') }}" style="color: black; text-decoration: none;">Legales generales</a></li>
+                        <li><a href="{{ url_for('terminos') }}" style="color: black; text-decoration: none;">Términos y condiciones</a></li>
+                        <li><a href="{{ url_for('politicas') }}" style="color: black; text-decoration: none;">Política de privacidad</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Redes sociales</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                    <a href="{{ url_for('home') }}"><img src="{{ url_for('static', filename='img/logo.webp') }}"
+                            alt="QORI PERU" style="width: 200px; margin-top: 20px;"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom py-3">
+        <div class="container">
+            <p class="text-center mb-0">QORI PERÚ S.A.C 2024 - Todos los Derechos Reservados ©</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+
+</html>

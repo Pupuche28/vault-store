@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Administrador</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menuAdministrador.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='img/image 19.webp') }}" type="QORI-PERU">
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menú Lateral -->
+            <div class="col-md-2 d-flex flex-column sidebar">
+                <!-- Logo -->
+                <div class="logo-container">
+                    <a href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" class="img-fluid logo">
+                    </a>
+                </div>
+
+                <!-- Opciones del Menú -->
+                <ul class="nav flex-column flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('rol_bp.menu_man_rol') }}"><i class="fas fa-user-tag"></i>
+                            Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('usuario_bp.menu_man_usuario') }}"><i
+                                class="fas fa-users"></i> Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('producto_bp.menu_man_producto') }}"><i
+                                class="fas fa-box"></i> Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('categoria_bp.menu_man_categoria') }}"><i
+                                class="fas fa-tags"></i> Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('resena_bp.menu_man_resena') }}"><i
+                                class="fas fa-star"></i> Reseñas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tarjetaAdmin_bp.menu_man_tarjeta') }}"><i
+                                class="fas fa-credit-card"></i> Tarjetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('pedido_bp.menu_man_pedido') }}"><i
+                                class="fas fa-truck"></i> Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('pago_bp.menu_man_pago') }}">
+                            <i class="fas fa-credit-card"></i> Pagos
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Usuario y Cerrar Sesión -->
+                <div class="user-info mt-auto">
+                    <span class="nav-link">{{ current_user.nombres }}</span>
+                    <a href="{{ url_for('autenticacion_bp.logout') }}" class="nav-link nav-link-underline">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="col-md-10 mt-4">
+                <h1 class="mb-4">Gestión de Usuarios</h1>
+                <!-- Botón para abrir el modal de agregar usuario -->
+                <a href="#" class="btn btn-success mb-3" data-bs-toggle="modal"
+                    data-bs-target="#agregarUsuarioModal">Agregar Usuario</a>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Teléfono</th>
+                            <th>Documento</th>
+                            <th>Dirección</th>
+                            <th>Rol</th>
+                            <th>Fecha Creación</th> <!-- Nueva columna -->
+                            <th>Fecha Modificación</th> <!-- Nueva columna -->
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>                    
+                    <tbody>
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td>{{ usuario[0] }}</td> <!-- idUsuario -->
+                            <td>{{ usuario[1] }} {{ usuario[2] }}</td> <!-- nombres y apellidos -->
+                            <td>{{ usuario[3] }}</td> <!-- email -->
+                            <td>{{ usuario[4] }}</td> <!-- telefono -->
+                            <td>{{ usuario[5] }}</td> <!-- nroDocIde -->
+                            <td>{{ usuario[6] }}</td> <!-- direccion -->
+                            <td>{{ 'Administrador' if usuario[7] == 1 else 'Cliente' }}</td> <!-- idRol -->
+                            <td>{{ usuario[8] }}</td> <!-- fechaCreacion -->
+                            <td>{{ usuario[9] }}</td> <!-- fechaModificacion -->
+                            <td>
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editarUsuarioModal" data-id="{{ usuario[0] }}"
+                                    data-nombres="{{ usuario[1] }}" data-apellidos="{{ usuario[2] }}"
+                                    data-email="{{ usuario[3] }}" data-telefono="{{ usuario[4] }}"
+                                    data-documento="{{ usuario[5] }}" data-direccion="{{ usuario[6] }}"
+                                    data-rol="{{ usuario[7] }}">Editar</a>
+                    
+                                <button type="button" class="btn btn-danger"
+                                    onclick="confirmarEliminacion('{{ usuario[0] }}')">
+                                    Eliminar
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>                    
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmar para Eliminar Usuario -->
+    <div class="modal fade" id="confirmarEliminacionModal" tabindex="-1"
+        aria-labelledby="confirmarEliminacionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminacionModalLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="mensaje-confirmacion">
+                    <!-- Este mensaje se actualizará dinámicamente -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="eliminarUsuarioForm" method="POST">
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Usuario -->
+    <div class="modal fade" id="editarUsuarioModal" tabindex="-1" aria-labelledby="editarUsuarioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarUsuarioForm" method="POST"
+                        action="{{ url_for('usuario_bp.actualizar_usuario_administrador') }}">
+                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombres" name="nombres">
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidos" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos">
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono">
+                        </div>
+                        <div class="mb-3">
+                            <label for="documento" class="form-label">Documento</label>
+                            <input type="text" class="form-control" id="documento" name="documento">
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion">
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol</label>
+                            <select class="form-select" id="rol" name="rol">
+                                <option value="1">Administrador</option>
+                                <option value="2">Cliente</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="idUsuario" name="idUsuario">
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Usuario -->
+    <div class="modal fade" id="agregarUsuarioModal" tabindex="-1" aria-labelledby="agregarUsuarioModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarUsuarioModalLabel">Agregar Usuario</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agregarUsuarioForm" method="POST"
+                        action="{{ url_for('usuario_bp.agregar_usuario_administrador') }}">
+                        <div class="mb-3">
+                            <label for="nombres" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombres" name="nombres" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidos" class="form-label">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" name="telefono" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="documento" class="form-label">Documento</label>
+                            <input type="text" class="form-control" id="documento" name="documento" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" name="direccion" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rol" class="form-label">Rol</label>
+                            <select class="form-select" id="rol" name="rol">
+                                <option value="1">Administrador</option>
+                                <option value="2">Cliente</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Usuario</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirmarEliminacion(idUsuario) {
+            // Hacer una petición para verificar si el usuario tiene reseñas activas
+            fetch(`/usuario/verificar_resenas/${idUsuario}`)
+                .then(response => response.json())
+                .then(data => {
+                    const mensajeConfirmacion = document.getElementById('mensaje-confirmacion');
+                    const formEliminarUsuario = document.getElementById('eliminarUsuarioForm');
+                    
+                    // Si el usuario tiene reseñas, mostrar una advertencia adicional
+                    if (data.tiene_resenas) {
+                        mensajeConfirmacion.textContent = "El usuario tiene reseñas activas. ¿Estás seguro que deseas eliminarlo?";
+                    } else {
+                        mensajeConfirmacion.textContent = "¿Estás seguro que deseas eliminar este usuario? Esta acción no se puede deshacer.";
+                    }
+                    
+                    // Actualizar la acción del formulario para proceder con la eliminación
+                    formEliminarUsuario.action = `/usuario/eliminar_administrador/${idUsuario}`;
+                    
+                    // Mostrar el modal
+                    const eliminarModal = new bootstrap.Modal(document.getElementById('confirmarEliminacionModal'));
+                    eliminarModal.show();
+                })
+                .catch(error => {
+                    console.error('Error al verificar reseñas:', error);
+                });
+        }
+    </script>
+    
+
+    <script>
+        var editarUsuarioModal = document.getElementById('editarUsuarioModal');
+        editarUsuarioModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;  // Botón que disparó el modal
+            var idUsuario = button.getAttribute('data-id');
+            var nombres = button.getAttribute('data-nombres');
+            var apellidos = button.getAttribute('data-apellidos');  // Apellidos separados
+            var email = button.getAttribute('data-email');
+            var telefono = button.getAttribute('data-telefono');
+            var documento = button.getAttribute('data-documento');
+            var direccion = button.getAttribute('data-direccion');
+            var rol = button.getAttribute('data-rol');
+
+            // Rellenar los campos del formulario con los datos del usuario
+            document.getElementById('idUsuario').value = idUsuario;
+            document.getElementById('nombres').value = nombres;
+            document.getElementById('apellidos').value = apellidos;  // Cargar apellidos en su campo
+            document.getElementById('email').value = email;
+            document.getElementById('telefono').value = telefono;
+            document.getElementById('documento').value = documento;
+            document.getElementById('direccion').value = direccion;
+            document.getElementById('rol').value = rol;
+        });
+    </script>
+
+    <script>
+        document.getElementById('editarUsuarioForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas realizar los cambios?");
+            if (!confirmar) {
+                event.preventDefault();  // Si el usuario cancela, evita el envío del formulario
+            }
+        });
+    </script>
+
+    <script>
+        document.getElementById('agregarUsuarioForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas registrar este usuario?");
+            if (!confirmar) {
+                event.preventDefault();  // Si el usuario cancela, evita el envío del formulario
+            }
+        });
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Reseñas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menuAdministrador.css') }}">
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menú Lateral -->
+            <div class="col-md-2 d-flex flex-column sidebar">
+                <div class="logo-container">
+                    <a href="{{ url_for('home') }}">
+                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" class="img-fluid logo">
+                    </a>
+                </div>
+
+                <!-- Opciones del Menú -->
+                <ul class="nav flex-column flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('rol_bp.menu_man_rol') }}"><i class="fas fa-user-tag"></i>
+                            Roles</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('usuario_bp.menu_man_usuario') }}"><i
+                                class="fas fa-users"></i> Usuarios</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('producto_bp.menu_man_producto') }}"><i
+                                class="fas fa-box"></i> Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('categoria_bp.menu_man_categoria') }}"><i
+                                class="fas fa-tags"></i> Categorías</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('resena_bp.menu_man_resena') }}"><i
+                                class="fas fa-star"></i> Reseñas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('tarjetaAdmin_bp.menu_man_tarjeta') }}"><i
+                                class="fas fa-credit-card"></i> Tarjetas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('pedido_bp.menu_man_pedido') }}"><i
+                                class="fas fa-truck"></i> Pedidos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('pago_bp.menu_man_pago') }}">
+                            <i class="fas fa-credit-card"></i> Pagos
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Usuario y Cerrar Sesión -->
+                <div class="user-info mt-auto">
+                    <span class="nav-link">{{ current_user.nombres }}</span>
+                    <a href="{{ url_for('autenticacion_bp.logout') }}" class="nav-link nav-link-underline">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+
+            <!-- Contenido principal -->
+            <div class="col-md-10 mt-4">
+                <h1 class="mb-4">Gestión de Reseñas</h1>
+
+                <!-- Botón para abrir el modal de agregar reseña -->
+                <a href="#" class="btn btn-success mb-3" data-bs-toggle="modal"
+                    data-bs-target="#agregarResenaModal">Agregar Reseña</a>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Descripción</th>
+                            <th>Usuario</th>
+                            <th>Creado El</th>
+                            <th>Modificado El</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for resena in resenas %}
+                        <tr>
+                            <td>{{ resena[0] }}</td> <!-- idResena -->
+                            <td>{{ resena[1] }}</td> <!-- descripcion -->
+                            <td>{{ resena[2] }}</td> <!-- nombre del usuario -->
+                            <td>{{ resena[4] }}</td> <!-- fechaCreacion -->
+                            <td>{{ resena[5] }}</td> <!-- fechaModificacion -->
+                            <td>
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#editarResenaModal" data-id="{{ resena[0] }}"
+                                    data-descripcion="{{ resena[1] }}" data-usuario="{{ resena[2] }}"
+                                    data-idUsuario="{{ resena[3] }}">Editar</a>
+                                <form method="POST"
+                                    action="{{ url_for('resena_bp.eliminar_resena', idResena=resena[0]) }}"
+                                    style="display:inline;">
+                                    <button type="submit" class="btn btn-danger eliminar-btn">Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Reseña -->
+    <div class="modal fade" id="agregarResenaModal" tabindex="-1" aria-labelledby="agregarResenaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="agregarResenaModalLabel">Agregar Reseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="agregarResenaForm" method="POST" action="{{ url_for('resena_bp.agregar_resena') }}">
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idUsuario" class="form-label">Usuario</label>
+                            <select class="form-control" id="idUsuario" name="idUsuario" required>
+                                <option value="" selected disabled>Seleccione un usuario</option>
+                                {% for usuario in usuarios %}
+                                <option value="{{ usuario[0] }}">{{ usuario[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Reseña</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Reseña -->
+    <div class="modal fade" id="editarResenaModal" tabindex="-1" aria-labelledby="editarResenaModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarResenaModalLabel">Editar Reseña</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editarResenaForm" method="POST" action="{{ url_for('resena_bp.actualizar_resena') }}">
+                        <div class="mb-3">
+                            <label for="descripcionEditar" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcionEditar" name="descripcion"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="idUsuarioEditar" class="form-label">Usuario</label>
+                            <!-- Cambié el <p> por un <select> para que el usuario pueda ser cambiado -->
+                            <select class="form-control" id="idUsuarioEditar" name="idUsuario" required>
+                                {% for usuario in usuarios %}
+                                <option value="{{ usuario[0] }}">{{ usuario[1] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Campo oculto para enviar el idResena al backend -->
+                        <input type="hidden" id="idResena" name="idResena">
+                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts para manejo de modales y confirmaciones -->
+    <script>
+        var editarResenaModal = document.getElementById('editarResenaModal');
+        editarResenaModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var idResena = button.getAttribute('data-id');
+            var descripcion = button.getAttribute('data-descripcion');
+            var nombreUsuario = button.getAttribute('data-usuario');
+            var idUsuario = button.getAttribute('data-idUsuario'); // Asegúrate de tener este atributo en tu tabla
+
+            // Asignar valores al formulario del modal de edición
+            document.getElementById('idResena').value = idResena;
+            document.getElementById('descripcionEditar').value = descripcion;
+
+            // Seleccionar el usuario correspondiente en el <select>
+            var selectUsuario = document.getElementById('idUsuarioEditar');
+            for (var i = 0; i < selectUsuario.options.length; i++) {
+                if (selectUsuario.options[i].value == idUsuario) {
+                    selectUsuario.options[i].selected = true;
+                    break;
+                }
+            }
+        });
+
+        // Confirmación para eliminar
+        document.querySelectorAll('.eliminar-btn').forEach(button => {
+            button.addEventListener('click', function (event) {
+                var confirmar = confirm("¿Estás seguro que deseas eliminar esta reseña?");
+                if (!confirmar) {
+                    event.preventDefault();
+                }
+            });
+        });
+
+        // Confirmación para editar
+        document.getElementById('editarResenaForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas realizar los cambios?");
+            if (!confirmar) {
+                event.preventDefault();
+            }
+        });
+
+        // Confirmación para agregar
+        document.getElementById('agregarResenaForm').addEventListener('submit', function (event) {
+            var confirmar = confirm("¿Estás seguro que deseas registrar esta reseña?");
+            if (!confirmar) {
+                event.preventDefault();
+            }
+        });
+    </script>
+
+    <!-- Scripts de Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
