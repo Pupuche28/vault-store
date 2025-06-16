@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VAULT STORE</title>
+    <title>JOYERÍA ARTESANAL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
@@ -37,10 +37,10 @@
                                 Productos
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="productosDropdown">
-                                <li><a class="dropdown-item" href="{{ url_for('ceramica') }}">Celulares</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('joyeria') }}">Laptops</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('retablos') }}">Tablets</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('textiles') }}">Televisores</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('ceramica') }}">Cerámicas</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('joyeria') }}">Joyería Artesanal</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('retablos') }}">Retablos</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('textiles') }}">Textiles</a></li>
                             </ul>
                         </li>
                         <li class="nav-item me-2">
@@ -50,6 +50,10 @@
                         <li class="nav-item me-2">
                             <a class="nav-link nav-link-underline" style="color: black;"
                                 href="{{ url_for('nosotros') }}">Nosotros</a>
+                        </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link nav-link-underline" style="color: black;"
+                                href="{{ url_for('poncho_personalizado') }}">Personalizar</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link nav-link-underline" style="color: black;"
@@ -155,7 +159,7 @@
             <div class="col-12 banner-container">
                 <img src="{{ url_for('static', filename='img/joyeria.webp') }}" alt="Banner Image"
                     class="img-fluid w-100">
-                <div class="banner-text">LAPTOPS</div>
+                <div class="banner-text">JOYERÍA ARTESANAL</div>
             </div>
         </div>
     </div>
@@ -164,18 +168,37 @@
         <img src="{{ url_for('static', filename='img/background1.webp') }}" class="img-fluid mt-4 mb-4 w-100">
     </div>
 
-        <!-- Categoría visual -->
+    <!-- Categoría visual (similar a cerámica) -->
     <div class="container mt-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{ url_for('home') }}"
-                        style="text-decoration: none; color: black;"><i
-                            class="fa-solid fa-house"></i>&nbsp;&nbsp;Inicio</a></li>
+                        style="text-decoration: none; color: black;">
+                        <i class="fa-solid fa-house"></i>&nbsp;&nbsp;Inicio</a></li>
                 <li class="breadcrumb-item"><a href="#" style="text-decoration: none; color: black;">Productos</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Laptops</li>
+                <li class="breadcrumb-item active" aria-current="page">Joyería Artesanal</li>
             </ol>
         </nav>
+        <div class="row text-center">
+            <div class="col-6 col-sm-3 category-item">
+                <img src="{{ url_for('static', filename='img/orfebreriaJ.webp') }}" alt="Orfebrería">
+                <h5>Orfebrería</h5>
+            </div>
+            <div class="col-6 col-sm-3 category-item">
+                <img src="{{ url_for('static', filename='img/filigranaJ.webp') }}" alt="Filigrana">
+                <h5>Filigrana</h5>
+            </div>
+            <div class="col-6 col-sm-3 category-item">
+                <img src="{{ url_for('static', filename='img/hojalateriaJ.webp') }}" alt="Hojalatería">
+                <h5>Hojalatería</h5>
+            </div>
+            <div class="col-6 col-sm-3 category-item">
+                <img src="{{ url_for('static', filename='img/herreriaJ.webp') }}" alt="Herrería">
+                <h5>Herrería</h5>
+            </div>
+        </div>
     </div>
+
 
     <!-- Filtro de precio -->
     <div class="container mt-5">
@@ -184,12 +207,12 @@
                 <form action="{{ url_for('joyeria_bp.mostrar_joyeria') }}" method="GET">
                     <h5 class="filter">Filtrar por precio</h5>
                     <div class="form-group">
-                        <input type="range" class="form-control-range" min="1000" max="10000" id="priceRange" name="precio"
-                            value="1000" oninput="updatePriceValue(this.value)">
+                        <input type="range" class="form-control-range" min="30" max="1000" id="priceRange" name="precio"
+                            value="30" oninput="updatePriceValue(this.value)">
                         <div class="d-flex justify-content-between">
+                            <span>S/30</span>
+                            <span id="selectedPrice">S/30</span>
                             <span>S/1000</span>
-                            <span id="selectedPrice">S/2000</span>
-                            <span>S/10000</span>
                         </div>
                         <button type="submit" class="btn btn-warning mt-4 mb-4 btn-block">Filtrar</button>
                     </div>
@@ -198,7 +221,7 @@
 
             <!-- Productos dinámicos de joyería -->
             <div class="col-md-9">
-                <h5 class="mb-3">{{ productos|length }} LAPTOPS</h5>
+                <h5 class="mb-3">{{ productos|length }} JOYERÍAS ARTESANALES</h5>
                 <div class="row" id="product-list">
                     {% for producto in productos %}
                     <div class="col-md-4 mb-4">
@@ -206,6 +229,7 @@
                             <img src="{{ url_for('static', filename='img/' + producto[4]) }}"
                                 class="card-img-top product-image" alt="{{ producto[1] }}">
                             <div class="position-absolute top-0 end-0 mt-2 me-2 d-flex flex-column">
+                                <button class="btn btn-light btn-circle mb-2"><i class="fas fa-heart"></i></button>
                                 <button class="btn btn-light btn-circle mb-2 add-to-cart"><i
                                         class="fas fa-shopping-cart"></i></button>
                                 <a href="{{ url_for('productodetalle', id_producto=producto[0]) }}"
@@ -447,6 +471,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-</body>
+
+    <!-- Scripts de notificación de carga -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload-notification.css') }}">
+    <script src="{{ url_for('static', filename='js/upload-handler.js') }}"></script>
+    </body>
 
 </html>

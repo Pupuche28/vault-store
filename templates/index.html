@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    <link rel="icon" href="{{ url_for('static', filename='img/image 19.webp') }}" type="VAULT-STORE">
+    <link rel="icon" href="{{ url_for('static', filename='img/image 19.webp') }}" type="QORI-PERU">
 </head>
 
 <body>
@@ -21,30 +21,30 @@
     <!-- Contenido principal -->
     <div id="main-content">
 
-        <!-- Barra de navegación clara -->
-        <div class="container-fluid"
-            style="background-color: #ffffff; font-weight: 700; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+        <!-- Barra de navegación -->
+        <div class="container-fluid" style="background-color: #F8F2E4; font-weight: 700;">
             <div class="container">
                 <nav class="navbar navbar-expand-lg navbar-light">
                     <a class="navbar-brand ms-5" href="{{ url_for('home') }}">
-                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo" style="height: 50px; width: auto; max-height: 60px;">
+                        <img src="{{ url_for('static', filename='img/logo.webp') }}" alt="Logo">
                     </a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav mx-auto">
                             <li class="nav-item me-2">
-                                <a class="nav-link nav-link-underline text-dark" href="{{ url_for('home') }}">Inicio</a>
+                                <a class="nav-link nav-link-underline" style="color: black;"
+                                    href="{{ url_for('home') }}">Inicio</a>
                             </li>
                             <li class="nav-item dropdown me-2">
-                                <a class="nav-link dropdown-toggle text-dark" href="#" id="productosDropdown"
-                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <a class="nav-link dropdown-toggle" style="color: black;" href="#"
+                                    id="productosDropdown" role="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
                                     Productos
                                 </a>
-                                <ul class="dropdown-menu">
+                                <ul class="dropdown-menu" aria-labelledby="productosDropdown">
                                     <li><a class="dropdown-item" href="{{ url_for('ceramica') }}">Cerámicas</a></li>
                                     <li><a class="dropdown-item" href="{{ url_for('joyeria') }}">Joyería Artesanal</a>
                                     </li>
@@ -53,63 +53,68 @@
                                 </ul>
                             </li>
                             <li class="nav-item me-2">
-                                <a class="nav-link nav-link-underline text-dark"
+                                <a class="nav-link nav-link-underline" style="color: black;"
                                     href="{{ url_for('ceramica') }}">Tiendas</a>
                             </li>
                             <li class="nav-item me-2">
-                                <a class="nav-link nav-link-underline text-dark"
+                                <a class="nav-link nav-link-underline" style="color: black;"
                                     href="{{ url_for('nosotros') }}">Nosotros</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link nav-link-underline text-dark"
+                                <a class="nav-link nav-link-underline" style="color: black;"
                                     href="{{ url_for('contactos') }}">Contactos</a>
                             </li>
+                            <li class="nav-item me-2">
+                                <a class="nav-link nav-link-underline" style="color: black;"
+                                    href="{{ url_for('poncho_personalizado') }}">Personalizar</a>
+                            </li>
                         </ul>
-
                         <ul class="navbar-nav">
                             <li class="nav-item me-2">
-                                <a class="nav-link text-dark" href="#"><i class="fas fa-search"></i></a>
+                                <a class="nav-link" href="#"><i class="fas fa-search" style="color: black;"></i></a>
                             </li>
                             <li class="nav-item me-2">
                                 {% if current_user.is_authenticated %}
-                                <a class="nav-link text-dark" href="{{ url_for('mispedidos_bp.mis_pedidos') }}">
-                                    <i class="fas fa-box"></i>
+                                <!-- Si el usuario está autenticado, redirigir a Mis Pedidos -->
+                                <a class="nav-link" href="{{ url_for('mispedidos_bp.mis_pedidos') }}">
+                                    <i class="fas fa-box" style="color: black;"></i>
                                 </a>
                                 {% else %}
-                                <a class="nav-link text-dark" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#loginModal">
-                                    <i class="fas fa-box"></i>
+                                <!-- Si el usuario NO está autenticado, abrir el modal de login -->
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                    <i class="fas fa-box" style="color: black;"></i>
                                 </a>
                                 {% endif %}
                             </li>
-                            <li class="nav-item me-2">
-                                {% if current_user.is_authenticated %}
-                                <a class="nav-link text-dark" href="{{ url_for('carrito') }}">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </a>
-                                {% else %}
-                                <a class="nav-link text-dark" href="#" data-bs-toggle="modal"
-                                    data-bs-target="#loginModal">
-                                    <i class="fas fa-shopping-cart"></i>
-                                </a>
-                                {% endif %}
-                            </li>
+                            <ul class="navbar-nav">
+                                <li class="nav-item me-2">
+                                    {% if current_user.is_authenticated %}
+                                    <!-- Si el usuario está autenticado, redirigir al carrito -->
+                                    <a class="nav-link" href="{{ url_for('carrito') }}">
+                                        <i class="fas fa-shopping-cart" style="color: black;"></i>
+                                    </a>
+                                    {% else %}
+                                    <!-- Si el usuario NO está autenticado, abrir el modal de login -->
+                                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                        <i class="fas fa-shopping-cart" style="color: black;"></i>
+                                    </a>
+                                    {% endif %}
+                                </li>
+                            </ul>
                         </ul>
-
                         <ul class="navbar-nav me-5">
                             {% if current_user.is_authenticated %}
                             <li class="nav-item d-flex align-items-center">
-                                <span class="nav-link text-dark">{{ current_user.nombres }} |</span>
+                                <span class="nav-link" style="color: black; font-weight: bold;">{{ current_user.nombres }} |</span>
                                 <a href="{{ url_for('autenticacion_bp.logout') }}" class="nav-link nav-link-underline"
-                                    style="color: var(--accent-color);">
+                                    style="color: black;">
                                     Cerrar Sesión
                                 </a>
                             </li>
                             {% else %}
                             <li class="nav-item">
                                 <button class="nav-link nav-link-underline" data-bs-toggle="modal"
-                                    data-bs-target="#loginModal"
-                                    style="background: none; border: none; color: var(--accent-color);">
+                                    data-bs-target="#loginModal" style="background: none; border: none; color: black;">
                                     <i class="fa-solid fa-user"></i>&nbsp;&nbsp;Iniciar Sesión
                                 </button>
                             </li>
@@ -120,6 +125,7 @@
             </div>
         </div>
 
+        {% block content %}{% endblock %}
 
         <!-- Modal -->
         <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
@@ -158,7 +164,6 @@
                 </div>
             </div>
         </div>
-
 
         <!-- Carrusel -->
         <div>
@@ -394,13 +399,10 @@
                     </div>
                 </div>
 
-
-
                 <div>
                     <img src="{{ url_for('static', filename='img/background1.webp') }}"
                         class="img-fluid mt-4 mb-4 w-100">
                 </div>
-
 
                 <!-- Producto Ilimitado -->
                 <div class="container-fluid producto-ilimitado" style="background-color: #FDE8BC; padding: 50px;">
@@ -428,7 +430,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <div>
                     <img src="{{ url_for('static', filename='img/background1.webp') }}"
@@ -593,27 +594,34 @@
                     </div>
                 </div>
             </div>
+        </div>
 
-            <!-- Scripts -->
-            <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script>
-            <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-                crossorigin="anonymous"></script>
-            <script>
-                window.addEventListener('load', function () {
-                    const loadingScreen = document.getElementById('loading-screen');
-                    const mainContent = document.getElementById('main-content');
+        <!-- Scripts -->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script>
+        <script src="https://kit.fontawesome.com/79be0d4522.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+        <script>
+            window.addEventListener('load', function () {
+                const loadingScreen = document.getElementById('loading-screen');
+                const mainContent = document.getElementById('main-content');
 
-                    loadingScreen.classList.add('hidden');
+                loadingScreen.classList.add('hidden');
 
-                    loadingScreen.addEventListener('transitionend', function () {
-                        mainContent.classList.add('visible');
-                    });
+                loadingScreen.addEventListener('transitionend', function () {
+                    mainContent.classList.add('visible');
                 });
-            </script>
-</body>
+            });
+        </script>
+
+    <!-- Scripts de notificación de carga -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/upload-notification.css') }}">
+    <script src="{{ url_for('static', filename='js/upload-handler.js') }}"></script>
+    <div id="toast-container" style="position: fixed; bottom: 1rem; right: 1rem; z-index: 1050;"></div>
+    <script src="{{ url_for('static', filename='js/toast-personalizacion.js') }}"></script>
+    </body>
 
 </html>
