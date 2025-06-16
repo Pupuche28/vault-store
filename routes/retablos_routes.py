@@ -7,7 +7,7 @@ retablos_bp = Blueprint('retablos_bp', __name__)
 @retablos_bp.route('/retablos', methods=['GET'])
 def mostrar_retablos():
     # Obtener el valor del filtro de precio (si existe) con un valor predeterminado de 1000
-    precio_max = request.args.get('precio', type=int, default=10000)
+    precio_max = request.args.get('precio', type=int, default=1000)
     
     # Obtener los productos de retablos filtrados por precio máximo
     productos_retablos = obtener_productos_retablos_filtrados(precio_max)

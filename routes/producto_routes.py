@@ -163,10 +163,11 @@ def listar_producto_por_id(idProducto):
 
 # API para insertar un nuevo producto desde JSON
 @producto_bp.route("/api/insertarProducto", methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def insertar_producto_desde_json():
     try:
         data = request.json
+        print("[DEBUG] Datos recibidos para insertar producto:", data)
         nombredeproducto = data["nombredeproducto"]
         autor = data["autor"]
         precio = data["precio"]
@@ -177,14 +178,20 @@ def insertar_producto_desde_json():
         caracteristicas = data["caracteristicas"]
         idCategoria = data["idCategoria"]
         imagen = data["imagen"]
-        
+        print(f"[DEBUG] Campos: nombre={nombredeproducto}, autor={autor}, precio={precio}, descuento={descuento}, stock={stock}, tienda={nombredeTienda}, desc={descripcion}, caract={caracteristicas}, idCat={idCategoria}, imagen={imagen}")
         # Validación de datos
         if not nombredeproducto or not autor or not precio or not stock or not nombredeTienda:
+            print("[ERROR] Faltan campos obligatorios")
             return jsonify({"data": [], "message": "Todos los campos son obligatorios", "status": 0})
-
-        controlador_productos.agregar_producto(nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen)
-        return jsonify({"data": [], "message": "Producto registrado correctamente", "status": 1})
+        try:
+            idProducto = controlador_productos.agregar_producto(nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen)
+        except Exception as e:
+            print(f"[ERROR] Error al insertar producto en la base de datos: {e}")
+            return jsonify({"data": [], "message": f"Error al insertar en la base de datos: {e}", "status": -1})
+        print("[DEBUG] Producto insertado correctamente")
+        return jsonify({"data": {"idProducto": idProducto}, "message": "Producto registrado correctamente", "status": 1})
     except Exception as e:
+        print(f"[ERROR] Error general en insertar_producto_desde_json: {e}")
         return jsonify({"data": [], "message": str(repr(e)), "status": -1})
     
 

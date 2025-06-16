@@ -7,7 +7,7 @@ ceramica_bp = Blueprint('ceramica_bp', __name__)
 @ceramica_bp.route('/ceramica', methods=['GET'])
 def mostrar_ceramica():
     # Obtener el valor del filtro de precio (si existe)
-    precio_max = request.args.get('precio', type=int, default=10000)
+    precio_max = request.args.get('precio', type=int, default=1000)
     
     # Obtener los productos de cerámica filtrados por precio máximo
     productos_ceramica = obtener_productos_ceramica_filtrados(precio_max)

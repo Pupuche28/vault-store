@@ -7,7 +7,7 @@ textiles_bp = Blueprint('textiles_bp', __name__)
 @textiles_bp.route('/textiles', methods=['GET'])
 def mostrar_textiles():
     # Obtener el valor del filtro de precio (si existe) con un valor predeterminado de 1000
-    precio_max = request.args.get('precio', type=int, default=10000)
+    precio_max = request.args.get('precio', type=int, default=1000)
     
     # Obtener los productos de textiles filtrados por precio máximo
     productos_textiles = obtener_productos_textiles_filtrados(precio_max)

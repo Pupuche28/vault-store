@@ -6,8 +6,8 @@ joyeria_bp = Blueprint('joyeria_bp', __name__)
 
 @joyeria_bp.route('/joyeria', methods=['GET'])
 def mostrar_joyeria():
-    # Obtener el valor del filtro de precio (si existe) con un valor predeterminado de 10000
-    precio_max = request.args.get('precio', type=int, default=10000)
+    # Obtener el valor del filtro de precio (si existe) con un valor predeterminado de 1000
+    precio_max = request.args.get('precio', type=int, default=1000)
     
     # Obtener los productos de joyería filtrados por precio máximo
     productos_joyeria = obtener_productos_joyeria_filtrados(precio_max)
