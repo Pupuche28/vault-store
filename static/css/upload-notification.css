@@ -1,0 +1,62 @@
+.upload-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    width: 300px;
+    z-index: 1000;
+    display: none;
+    animation: slideIn 0.3s ease-out;
+}
+
+.upload-notification.show {
+    display: block;
+}
+
+.upload-notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.upload-notification-title {
+    font-weight: bold;
+    margin: 0;
+}
+
+.upload-notification-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 0;
+    color: #666;
+}
+
+.upload-notification-progress {
+    margin-top: 10px;
+}
+
+.upload-notification-file {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+} 
