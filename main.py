@@ -23,6 +23,7 @@ from routes.tarjetasAdmin_routes import tarjetaAdmin_bp
 from routes.pedido_routes import pedido_bp
 from routes.pago_routes import pago_bp
 from routes.detalleAdmin_routes import detalleAdmin_bp
+from routes.archivos_routes import archivos_bp
 
 from controllers.controlador_ceramica import obtener_productos_ceramica
 import controllers.controlador_tipoentrega as controlador_tipoentrega
@@ -31,11 +32,13 @@ import controllers.controlador_resenas as controlador_resenas
 import controllers.controlador_usuarios as controlador_usuarios
 import hashlib
 from controllers.controlador_usuarios import obtener_usuario_por_email
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
 # Agregar una clave secreta para las sesiones
-app.secret_key = 'sosa'
+app.secret_key = 'rodrigho'
 
 # Configuración para Flask-JWT-Extended
 app.config['JWT_SECRET_KEY'] = 'mi_clave_secreta_super_segura'
@@ -77,6 +80,7 @@ app.register_blueprint(tarjetaAdmin_bp, url_prefix='/tarjetasAdmin')
 app.register_blueprint(pedido_bp, url_prefix='/pedidos')
 app.register_blueprint(pago_bp, url_prefix='/pago')
 app.register_blueprint(detalleAdmin_bp, url_prefix='/detallePedido')
+app.register_blueprint(archivos_bp, url_prefix='/archivos')
 
 # Decorador para verificar que el usuario es administrador
 def admin_required(f):
@@ -242,6 +246,11 @@ def terminos():
 def textiles():
     return render_template("textiles.html")
 
+@app.route("/subir-archivo")
+@login_required
+def subir_archivo():
+    return render_template("subir_archivo.html")
+
 @app.route("/tipoentrega")
 @login_required
 def tipoentrega():
@@ -252,11 +261,45 @@ def tipoentrega():
 def tipopago():
     return render_template("tipopago.html")
 
+@app.route("/poncho-personalizado")
+def poncho_personalizado():
+    return render_template("poncho_personalizado.html")
+
 # Manejar el caso de rutas no autorizadas
 @login_manager.unauthorized_handler
 def unauthorized():
     flash("Debes iniciar sesión para acceder a esta página.", "warning")
     return redirect(url_for("home"))
+
+UPLOAD_FOLDER = os.path.join('static', 'img', 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/api/upload_personalizacion', methods=['POST'])
+def upload_personalizacion():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        # Si ya existe, renombrar
+        base, ext = os.path.splitext(filename)
+        counter = 1
+        while os.path.exists(save_path):
+            filename = f"{base}_{counter}{ext}"
+            save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            counter += 1
+        file.save(save_path)
+        url = f"/static/img/uploads/{filename}"
+        return jsonify({'url': url}), 200
+    return jsonify({'error': 'File type not allowed'}), 400
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)
