@@ -31,16 +31,16 @@ def obtener_todas_categorias():
 def agregar_producto(nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen):
     conexion = obtener_conexion()
     cursor = conexion.cursor()
-    
-    # Insertar el nuevo producto junto con la imagen
     query = '''
     INSERT INTO PRODUCTO (nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen)
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
     '''
-    
     cursor.execute(query, (nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen))
     conexion.commit()
+    cursor.execute('SELECT LAST_INSERT_ID()')
+    id_insertado = cursor.fetchone()[0]
     conexion.close()
+    return id_insertado
 
 # Actualizar un producto existente
 def actualizar_producto(idProducto, nombredeproducto, autor, precio, descuento, stock, nombredeTienda, descripcion, caracteristicas, idCategoria, imagen):

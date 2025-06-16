@@ -52,7 +52,12 @@ def registrar_detalle_pedido(conexion, id_pedido, carrito):
         for item in carrito:
             nombre_producto = item['name']
             cantidad = item['quantity']
-            cursor.execute("SELECT idProducto, precio, descuento, stock FROM PRODUCTO WHERE nombredeproducto = %s", (nombre_producto,))
+            # Buscar por idProducto si está disponible, si no por nombre
+            idProducto = item.get('idProducto') if isinstance(item, dict) else None
+            if idProducto:
+                cursor.execute("SELECT idProducto, precio, descuento, stock FROM PRODUCTO WHERE idProducto = %s", (idProducto,))
+            else:
+                cursor.execute("SELECT idProducto, precio, descuento, stock FROM PRODUCTO WHERE nombredeproducto = %s", (nombre_producto,))
             result = cursor.fetchone()
             if result:
                 id_producto = result[0]
